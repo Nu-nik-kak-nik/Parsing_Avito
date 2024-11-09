@@ -11,29 +11,34 @@ import variables
 logger = variables.setup_logger()
 
 
-def scrape_links(data_filtering: bool=False):
-    soup = None
+def scrape_links(data_filtering: bool=False) -> set | None:
     driver = None
+    received_links = set()
 
     try:
         options = Options()
         options.add_argument("--headless")
         driver = webdriver.Firefox(options=options)
         driver.get(variables.URL)
+
         soup = BeautifulSoup(driver.page_source, 'html.parser')
+        received_links.update(extract_links(soup, data_filtering))
+
     except Exception as e:
         logger.error(f"error checking link: {e}", exc_info=True)
+
     finally:
         if driver:
             driver.quit()
 
-    if soup:
-        if data_filtering:
-            return filter_links(soup, variables.EXCLUDED_WORDS, variables.PRICE_THRESHOLD)
-        else:
-            return {f"{variables.SITE}{item['href']}" for item in soup.find_all('a', class_=variables.CLASS_LINK)}
+    return received_links if received_links else None
+
+
+def extract_links(soup, data_filtering):
+    if data_filtering:
+        return filter_links(soup, variables.EXCLUDED_WORDS, variables.PRICE_THRESHOLD)
     else:
-        return None
+        return {f"{variables.SITE}{item['href']}" for item in soup.find_all('a', class_=variables.CLASS_LINK)}
 
 
 def filter_links(soup, words: set | None=None, price_threshold: list | None=None):
