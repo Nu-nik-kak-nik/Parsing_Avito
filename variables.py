@@ -2,10 +2,11 @@ import logging
 
 
 URL = 'https://www.avito.ru/krasnoyarsk/nastolnye_kompyutery' # link for parsing
+SEARCH_LOCATION = URL.split('/')[3] # locality where you are looking for ads
 SITE = 'https://www.avito.ru' # name of site
 DIR_NAME = 'DataSet' # directory for saving test files with links
 FILE_FORMAT = '.txt' # file format where links are written
-# TIME = 10 # time of parsing
+TIME = 10 # time of parsing
 LOG = 'log.txt' # file with recorded parsing errors
 FINAL_FILE = 'final.txt' # file with all unique links
 LOG_FILE = 'log.txt' # file for writing logs
