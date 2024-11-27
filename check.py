@@ -12,8 +12,8 @@ def check_links_in_directory(directory: str, final_file: str, file_format: str) 
 
         if filename.endswith(file_format):
             new_links = variables.read_from_file(os.path.join(directory, filename))
-            different_links = new_links - all_links
-            variables.write_to_file(different_links, final_file)
+            # different_links = new_links - all_links
+            variables.write_to_file((new_links - all_links), final_file)
 
 
 if __name__ == '__main__':

@@ -44,12 +44,13 @@ def extract_links(soup, link_parsing: str, class_link: str, data_filtering: bool
     else:
         links = {f"{link_parsing}{item['href']}" for item in soup.find_all('a', class_=class_link)}
         logger.info(f"Extracted {len(links)} links without filtering.")
+
     return links
 
 
 def filter_links(soup, class_item: str, class_link: str,
                  meta_name_price: str, location: str, link_parsing: str,
-                 words: set | None=None, price_threshold: list | None=None):
+                 words: set | None=None, price_threshold: list | None=None) -> set:
 
     links = set()
 
@@ -79,11 +80,14 @@ def filter_links(soup, class_item: str, class_link: str,
 
 
 def run_parser(file_path) -> None:
-    variables.write_to_file(scrape_links(variables.URL, data_filtering=True), file_path)
+    variables.write_to_file(scrape_links(variables.URL, data_filtering=True), file_path) # !!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 if __name__ == '__main__':
     run_parser(os.path.join(variables.DIR_NAME, f"{datetime.now().strftime('%Y-%m-%d')}{variables.FILE_FORMAT}"))
+    # variables.write_to_file(scrape_links(variables.URL, data_filtering=True),
+    #                         os.path.join(variables.DIR_NAME,
+    #                                      f"{datetime.now().strftime('%Y-%m-%d')}{variables.FILE_FORMAT}"))
     logger.info("file parsing.py executed.")
 
 else:

@@ -18,6 +18,9 @@ CLASS_LINK = 'iva-item-sliderLink-Fvfau' # name of the class where the link to t
 META_NAME_PRICE = 'price' # name of the object where the price information is stored
 EXCLUDED_WORDS = {'xeon'} # list of words that are not needed in the ad
 PRICE_THRESHOLD = [8_000, 40_000] # price range in which to search for ads
+MARKER = 'data-marker' # marker in html page
+CLOSURE_MESSAGE = 'item-view/closed-warning' # message about ad closure
+START_OF_LINK = 'https:'
 
 
 logger = logging.getLogger(__name__)
@@ -57,9 +60,15 @@ def read_from_file(file_path: str) -> set:
     links = set()
 
     try:
-
+        # if should_be_link:
+        #     with open(file_path, 'r', encoding=ENCODING) as file:
+        #         links = {line.strip() for line in file if line.strip() and line.strip()[:6] == START_OF_LINK}
+        # else:
+        #     with open(file_path, 'r', encoding=ENCODING) as file:
+        #         links = {line.strip() for line in file if line.strip()}
         with open(file_path, 'r', encoding=ENCODING) as file:
-            links = {line.strip() for line in file if line.strip()}
+            links = set(line.strip() for line in file
+                        if line.strip() and line.strip().startswith(START_OF_LINK))
 
     except FileNotFoundError as e:
         logger.error(f"file {file_path} not found: {e}", exc_info=True)
