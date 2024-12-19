@@ -2,11 +2,10 @@ import logging
 import time
 import subprocess
 
+import variables
 
-logging.basicConfig(filename='log.txt',
-                    level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+
+logger = variables.setup_logger()
 
 
 def run_script(script_name: str) -> None:
@@ -14,7 +13,7 @@ def run_script(script_name: str) -> None:
 
     try:
         subprocess.run(['python', script_name], text=True)
-        # logger.info(f"{script_name} execution time: {time.time() - start_time:.2f}s")
+        logger.info(f"{script_name} execution time: {time.time() - start_time:.2f}s")
         print(f"{script_name} execution time: {time.time() - start_time:.2f}s")
 
     except subprocess.CalledProcessError as e:
@@ -24,6 +23,7 @@ def run_script(script_name: str) -> None:
 
 def run_main():
     print('Hi!')
+    logger.info("file main.py started")
 
     while True:
         try:
@@ -63,7 +63,7 @@ def run_main():
 
 if __name__ == '__main__':
     run_main()
-    # logger.info("file main.py executed.")
+    logger.info("file main.py executed.")
 
 else:
     ...

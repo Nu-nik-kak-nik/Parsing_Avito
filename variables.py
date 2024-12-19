@@ -20,7 +20,8 @@ EXCLUDED_WORDS = {'xeon'} # list of words that are not needed in the ad
 PRICE_THRESHOLD = [8_000, 40_000] # price range in which to search for ads
 MARKER = 'data-marker' # marker in html page
 CLOSURE_MESSAGE = 'item-view/closed-warning' # message about ad closure
-START_OF_LINK = 'https:'
+START_OF_LINK = 'https:' # start of link
+PAGE_LIMITATION = 10 # limit of pages where ads are searched
 
 
 logger = logging.getLogger(__name__)
@@ -60,12 +61,6 @@ def read_from_file(file_path: str) -> set:
     links = set()
 
     try:
-        # if should_be_link:
-        #     with open(file_path, 'r', encoding=ENCODING) as file:
-        #         links = {line.strip() for line in file if line.strip() and line.strip()[:6] == START_OF_LINK}
-        # else:
-        #     with open(file_path, 'r', encoding=ENCODING) as file:
-        #         links = {line.strip() for line in file if line.strip()}
         with open(file_path, 'r', encoding=ENCODING) as file:
             links = set(line.strip() for line in file
                         if line.strip() and line.strip().startswith(START_OF_LINK))

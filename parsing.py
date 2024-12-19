@@ -3,6 +3,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 
 import variables
@@ -20,9 +21,15 @@ def scrape_links(url: str, data_filtering: bool=False) -> set | None:
         options.add_argument("--headless")
         driver = webdriver.Firefox(options=options)
         driver.get(url)
+        page_count = page_counter(
+            driver.find_element(by=By.XPATH, value="//span[@data-marker='page-title/count']").text.replace(' ', ''),
+            variables.PAGE_LIMITATION)
 
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        received_links.update(extract_links(soup, variables.SITE, variables.CLASS_LINK, data_filtering))
+        for page in range(1, page_count + 1):
+            driver.get(f"{url}?p={page}")
+            driver.implicitly_wait(3)
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            received_links.update(extract_links(soup, variables.SITE, variables.CLASS_LINK, data_filtering))
 
     except Exception as e:
         logger.error(f"error checking link: {e}", exc_info=True)
@@ -32,6 +39,20 @@ def scrape_links(url: str, data_filtering: bool=False) -> set | None:
             driver.quit()
 
     return received_links if received_links else None
+
+
+def page_counter(ads_count, limit):
+    int_count = int(ads_count)
+
+    if int_count % 50 > 0:
+        page_count = (int_count // 50) + 1
+    else:
+        page_count = int_count // 50
+
+    if 0 < limit < page_count:
+        page_count = limit
+
+    return page_count
 
 
 def extract_links(soup, link_parsing: str, class_link: str, data_filtering: bool=False) -> set | None:
@@ -79,15 +100,13 @@ def filter_links(soup, class_item: str, class_link: str,
     return links
 
 
-def run_parser(file_path) -> None:
-    variables.write_to_file(scrape_links(variables.URL, data_filtering=True), file_path) # !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
 if __name__ == '__main__':
-    run_parser(os.path.join(variables.DIR_NAME, f"{datetime.now().strftime('%Y-%m-%d')}{variables.FILE_FORMAT}"))
-    # variables.write_to_file(scrape_links(variables.URL, data_filtering=True),
-    #                         os.path.join(variables.DIR_NAME,
-    #                                      f"{datetime.now().strftime('%Y-%m-%d')}{variables.FILE_FORMAT}"))
+    variables.write_to_file(scrape_links(
+        variables.URL, data_filtering=True),
+        os.path.join(
+            variables.DIR_NAME,
+            f"{datetime.now().strftime('%Y-%m-%d')}{variables.FILE_FORMAT}"
+        ))
     logger.info("file parsing.py executed.")
 
 else:
