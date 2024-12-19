@@ -2,6 +2,8 @@
 
 This project is an automated parser for Avito ads. It's designed to find and collect links to current ads that meet specified criteria. The parser uses Selenium for web page interaction and BeautifulSoup for HTML processing.
 
+This is a small project that works via the command line, its logical development will be made in the form of another project that I have started writing now.
+
 ## Functionality
 
 The project consists of several scripts:
